@@ -1,0 +1,27 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bg: #edf2f1; --surface: #ffffff; --ink: #10282b; --muted: #5b7275; --line: #d3dfdd;
+  --brand: #0e5a60; --on-brand: #ffffff; --on-status: #ffffff;
+  --present: #1f8f5f; --absent: #d1495b; --late: #b7791f; --excused: #3f6fd1;
+  --present-soft: #ddf1e8; --absent-soft: #f9e1e4; --late-soft: #f6ebcf; --excused-soft: #e0e8f8;
+  color-scheme: light;
+}
+.dark {
+  --bg: #0d1718; --surface: #142224; --ink: #e6f0ee; --muted: #8fa9a8; --line: #223436;
+  --brand: #4fb3a9; --on-brand: #06201e; --on-status: #0d1718;
+  --present: #46c28b; --absent: #f07a88; --late: #e8b04a; --excused: #7fa2f0;
+  --present-soft: #17352a; --absent-soft: #3a1d23; --late-soft: #3a2f14; --excused-soft: #1b2a4a;
+  color-scheme: dark;
+}
+
+html, body, #root { min-height: 100%; }
+body { @apply bg-bg font-sans text-ink antialiased; }
+:focus-visible { outline: 2px solid var(--brand); outline-offset: 2px; }
+@media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
+@media print {
+  nav, header, .no-print { display: none !important; }
+  body { background: #fff; color: #000; }
+}

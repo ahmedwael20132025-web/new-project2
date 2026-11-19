@@ -1,0 +1,80 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  ADMIN
+  TEACHER
+}
+
+enum AttendanceStatus {
+  PRESENT
+  ABSENT
+  LATE
+  EXCUSED
+}
+
+model User {
+  id                 Int           @id @default(autoincrement())
+  username           String        @unique
+  name               String
+  passwordHash       String
+  role               Role          @default(TEACHER)
+  mustChangePassword Boolean       @default(true)
+  active             Boolean       @default(true)
+  createdAt          DateTime      @default(now())
+  classes            SchoolClass[] @relation("ClassTeachers")
+  marked             Attendance[]
+
+  @@map("users")
+}
+
+model SchoolClass {
+  id         Int          @id @default(autoincrement())
+  name       String       @unique
+  grade      String?
+  createdAt  DateTime     @default(now())
+  teachers   User[]       @relation("ClassTeachers")
+  students   Student[]
+  attendance Attendance[]
+
+  @@map("classes")
+}
+
+model Student {
+  id            Int          @id @default(autoincrement())
+  code          String       @unique
+  name          String
+  guardianPhone String?
+  active        Boolean      @default(true)
+  classId       Int
+  class         SchoolClass  @relation(fields: [classId], references: [id])
+  createdAt     DateTime     @default(now())
+  attendance    Attendance[]
+
+  @@index([classId])
+  @@map("students")
+}
+
+model Attendance {
+  id         Int              @id @default(autoincrement())
+  studentId  Int
+  classId    Int
+  date       DateTime         @db.Date
+  status     AttendanceStatus
+  note       String?
+  markedById Int
+  updatedAt  DateTime         @updatedAt
+  student    Student          @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  class      SchoolClass      @relation(fields: [classId], references: [id])
+  markedBy   User             @relation(fields: [markedById], references: [id])
+
+  @@unique([studentId, date])
+  @@index([classId, date])
+  @@map("attendance")
+}
